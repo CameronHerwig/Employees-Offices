@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link href="css/style.css" rel="stylesheet">
+    <title>Navbar Template for Bootstrap</title>
+  </head>
+  <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+      
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      select{
+        margin:40px;
+        background: lightgray;
+        color:#000;
+      }     
+option:not(:checked) { 
+    background-color: #FFF; 
+}
+      </style>
+  <body>
+
+<!-- HEADER, JS, & CSS -->
+
+  <div class="row">
+
+    <div class="col-md-6" id="login">
+      <h1>Log In</h1>
+      <form>
+        <div class="form-group">
+          <label for="newOfficeName">Office Name</label>
+          <input type="text" class="form-control" id="newOfficeName" placeholder="Office Name">
+        </div>
+        <button type="button" id="newOfficeButton" class="btn btn-default" onclick="AddOffice()">Submit</button>
+      </form>    
+      <br>
+      <br>
+      <br>
+      <table id="officeTable">
+        <thead> 
+          <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Checkbox</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody> 
+      </table>
+      <br>
+      <button type="button" id="deleteOfficeButton" class="btn btn-default" onclick="DeleteOffice()">Delete All Selected</button>
+    </div>
+
+    <div class="col-md-6">
+      <h1>Sign Up</h1>
+      <form>
+        <div class="form-group">
+          <label for="employeeName">Name</label>
+          <input type="text" class="form-control" id="newEmployeeName" placeholder="Name">
+        </div>
+        <div class="form-group">
+          <label for="employeeDate">Date Of Hire</label>
+          <input type="text" class="form-control" id="newEmployeeDate" placeholder="Month/Day/Year" maxlength="10">
+        </div>
+        <div class="form-group">
+          <label for="officeSelect">Office</label>   
+          <select id="officeSelect">
+          </select>
+        </div>
+        <button type="button" id="newEmployeeButton" class="btn btn-default" onclick="AddEmployee()">Submit</button>
+      </form>   
+      <br>  
+      <br>
+      <br>
+      <table id="employeeTable">
+          <thead> 
+            <tr>
+              <th>Employee Name</th>
+              <th>Date of Hire</th>
+              <th>Office Name</th>
+              <th>Checkbox</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody> 
+        </table>
+        <br>
+        <button type="button" id="deleteEmployeeButton" class="btn btn-default" onclick="DeleteEmployee()">Delete All Selected</button>
+    </div>
+  </div>
+</div>
+</body>
+<script>
+
+    var officeList = Array();
+    var employeeList = Array();
+
+    window.onload = function() {
+      BuildOfficeTable();
+    }
+
+    function BuildOfficeTable()
+    {
+      var request = new XMLHttpRequest();
+      request.open('GET', 'http://dev.smartpelican.com/public/test_task/departments.php',true);
+      request.onload = function () {
+        var offices = JSON.parse(this.response);
+        if (request.status >= 200 && request.status < 400) {
+          var table = document.getElementById('officeTable').getElementsByTagName('tbody')[0];
+          offices.forEach(office => {
+            var row = table.insertRow(0);
+
+            var Id = row.insertCell(0);
+            var Name = row.insertCell(1);
+            var CheckBox = row.insertCell(2);     
+
+            Id.innerHTML = office.id;
+            Name.innerHTML = office.name;   
+            CheckBox.innerHTML = "<input type='checkbox' id=" + office.name + "CheckBox />";   
+            officeList.push(office.name);
+          });
+          FillOfficeList();
+        } 
+        else {
+          console.log('error');
+        }
+      }
+
+      request.send();
+    }
+
+    function FillOfficeList()
+    {
+      var list = document.getElementById("officeSelect");
+      officeList.forEach(office => {
+        var option = document.createElement("option", "id=Select" + office);
+        option.text = office;
+        list.add(option);
+      })
+    }
+
+    function AddEmployee() {
+      employeeName = document.getElementById('newEmployeeName').value;
+      var select = document.getElementById('officeSelect');  
+
+      if(employeeList.includes(employeeName))
+      {
+        alert("Employee name must be unique.");
+        return;
+      }
+
+      if(document.getElementById('newEmployeeName').value == "" || document.getElementById('newEmployeeDate').value == "" || select.options[select.selectedIndex].text == "")
+      {
+        alert("All fields must be set");
+        return;
+      }
+
+      var table = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];         
+      var row = table.insertRow(0);
+
+      var Name = row.insertCell(0);
+      var DateOfHire = row.insertCell(1);
+      var Office = row.insertCell(2);    
+      var CheckBox = row.insertCell(3);      
+
+      Name.innerHTML = employeeName;
+      DateOfHire.innerHTML = document.getElementById('newEmployeeDate').value;  
+      
+      Office.innerHTML = select.options[select.selectedIndex].text;
+      CheckBox.innerHTML = "<input type='checkbox' id=" + employeeName + "CheckBox />";   
+      employeeList.push(employeeName);
+    }
+
+    function AddOffice() {
+
+      var list = document.getElementById("officeTable").getElementsByTagName('tbody')[0];
+
+      var officeName = document.getElementById('newOfficeName').value;
+
+      if(officeList.includes(officeName))
+      {
+        alert("Office name must be unique.");
+        return;
+      }
+
+      if(officeName == "")
+      {
+        alert("Name must be set");
+        return;
+      }
+
+      officeList.push(officeName);
+      
+      var row = list.insertRow(0);
+
+      var Id = row.insertCell(0);
+      var Name = row.insertCell(1);
+      var CheckBox = row.insertCell(2);     
+
+      Id.innerHTML = officeList.length;
+      Name.innerHTML = officeName;
+
+      CheckBox.innerHTML = "<input type='checkbox' id=" + officeName + "CheckBox />";   
+
+      var selectList = document.getElementById("officeSelect");
+      var option = document.createElement("option", "id=Select" + officeName);
+      option.text = officeName;
+      selectList.add(option);
+    }
+
+    function DeleteOffice() {
+      var rows = document.getElementById("officeTable").rows;
+      var rowCount = rows.length;
+      var deleteList = new Array();
+      
+      for(var i = 1; i < rowCount; i++)
+      {       
+        var officeName = rows[i].cells[1];
+        var checkBox = officeName.innerHTML + "CheckBox";
+        if(document.getElementById(checkBox).checked)
+        {
+          deleteList.push(officeName.innerHTML);
+        }
+      }
+
+      var confirmString = "Confirm Deletion of Offices: \n";
+      deleteList.forEach(office => {
+        confirmString= confirmString + office + "\n";
+      });
+
+      if(window.confirm(confirmString))
+      {
+        var list = document.getElementById("officeTable").getElementsByTagName('tbody')[0];
+        var rows = list.rows;
+        var rowCount = rows.length;
+        for(var i = 0; i < rowCount; i++)
+        {       
+          var officeName = rows[i].cells[1];
+          if(deleteList.includes(officeName.innerHTML))
+          {
+            list.deleteRow(i);
+            rowCount--;
+            i--;
+            var index = officeList.indexOf(officeName.innerHTML);
+            if (index > -1) {
+              officeList.splice(index, 1);
+            }
+          }
+        }
+
+        var empList = document.getElementById("employeeTable").getElementsByTagName('tbody')[0];
+        var empRows = empList.rows;
+        var empRowCount = empRows.length;
+        console.log(empRows);
+        for(var i = 0; i < empRowCount; i++)
+        {       
+          var empOfficeName = empRows[i].cells[2];
+          console.log(empOfficeName.innerHTML);
+          if(deleteList.includes(empOfficeName.innerHTML))
+          {
+            var index = employeeList.indexOf(empRows[i].cells[0].innerHTML);
+            if (index > -1) {
+              employeeList.splice(index, 1);
+            }
+            empList.deleteRow(i);
+            i--;
+            empRowCount--;
+          }
+        }
+
+        deleteList.forEach(office => {
+          var selectList = document.getElementById("officeSelect");
+          var selectCount = selectList.length;
+          for(var i = 0; i < selectCount; i++)
+          {
+            if(selectList.options[i].value == office)
+            {
+              selectList.options[i] = null;
+            }
+          }
+        });
+
+      }
+    }
+
+    function DeleteEmployee() {
+      var rows = document.getElementById("employeeTable").rows;
+      var rowCount = rows.length;
+      var deleteList = new Array();
+
+      for(var i = 1; i < rowCount; i++)
+      {       
+        var employeeName = rows[i].cells[0];
+        var checkBox = employeeName.innerHTML + "CheckBox";
+        if(document.getElementById(checkBox).checked)
+        {
+          deleteList.push(employeeName.innerHTML);
+        }
+      }
+
+      var confirmString = "Confirm Deletion of Employees: \n";
+      deleteList.forEach(employee => {
+        confirmString= confirmString + employee + "\n";
+      });
+
+      if(window.confirm(confirmString))
+      {
+        var list = document.getElementById("employeeTable").getElementsByTagName('tbody')[0];
+        var rows = list.rows;
+        var rowCount = rows.length;
+
+        for(var i = 0; i < rowCount; i++)
+        {       
+          var employeeName = rows[i].cells[0];
+          if(deleteList.includes(employeeName.innerHTML))
+          {
+            list.deleteRow(i);
+            var index = employeeList.indexOf(employeeName.innerHTML);
+            if (index > -1) {
+              employeeList.splice(index, 1);
+            }
+          }
+        }
+      }
+    }
+
+  </script>
+</html>
