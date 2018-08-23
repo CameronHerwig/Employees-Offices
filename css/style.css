@@ -39,6 +39,27 @@ color: white;
   margin-bottom: 5%;
 }
 
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+select{
+margin:40px;
+background: lightgray;
+color:#000;
+}     
+option:not(:checked) { 
+background-color: #FFF; 
+}
+
 .aaa{
   background color: #666666;
   margin-top: 5%;
