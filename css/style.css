@@ -60,6 +60,16 @@ option:not(:checked) {
 background-color: #FFF; 
 }
 
+.modal-body{
+  background: #FFF;
+  color:#000;
+}
+
+.modal-title{
+  background: #FFF;
+  color:#000;
+}
+
 .aaa{
   background color: #666666;
   margin-top: 5%;
