@@ -266,7 +266,7 @@
           console.log(empOfficeName.innerHTML);
           if(deleteList.includes(empOfficeName.innerHTML))
           {
-            var index = employeeList.indexOf(empRows[i].cells[0].innerHTML + empOfficeName);
+            var index = employeeList.indexOf(empRows[i].cells[0].innerHTML + empOfficeName.innerHTML);
             if (index > -1) {
               employeeList.splice(index, 1);
             }
