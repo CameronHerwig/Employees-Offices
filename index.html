@@ -87,6 +87,7 @@
 
     var officeList = Array();
     var employeeList = Array();
+    var idCount;
 
     window.onload = function() {
       BuildOfficeTable();
@@ -112,6 +113,7 @@
             CheckBox.innerHTML = "<input type='checkbox' id=" + office.name + "CheckBox />";   
             officeList.push(office.name); //adds to master list
           });
+          idCount = officeList.length;
           FillOfficeList(); //fills select list
         } 
         else {
@@ -200,8 +202,9 @@
       var Id = row.insertCell(0);
       var Name = row.insertCell(1);
       var CheckBox = row.insertCell(2);     
-
-      Id.innerHTML = officeList.length; //sets values
+      
+      idCount++;
+      Id.innerHTML = idCount; //sets values
       Name.innerHTML = officeName;
 
       CheckBox.innerHTML = "<input type='checkbox' id=" + officeName + "CheckBox />";   
